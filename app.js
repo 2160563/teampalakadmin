@@ -45,8 +45,9 @@ function handleDisconnect() {
 
 handleDisconnect();
 
-app.listen(3001, function() {
-  console.log("Admin module running on port 3001.");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Our app is running on port ${ PORT }`);
 });
 
 /**

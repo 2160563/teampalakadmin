@@ -1,0 +1,34 @@
+{
+  "name": "node-push",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.6.2",
+    "bcrypt": "^3.0.6",
+    "body-parser": "^1.18.3",
+    "convert-time": "^0.3.0",
+    "dota2-api": "^0.2.1",
+    "dotenv": "^6.2.0",
+    "ejs": "^2.6.1",
+    "ejs-lint": "^0.3.0",
+    "express": "^4.16.4",
+    "express-fileupload": "^1.1.5",
+    "express-session": "^1.16.1",
+    "filereader": "^0.10.3",
+    "fs": "0.0.1-security",
+    "moment": "^2.24.0",
+    "mysql": "^2.17.1",
+    "q": "^1.5.1",
+    "riot-lol-api": "^4.3.1",
+    "routes": "^2.1.0",
+    "semaphore-sms-api": "^1.0.0",
+    "web-push": "^3.3.3"
+  }
+}

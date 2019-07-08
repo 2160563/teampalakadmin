@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>TeamPalak - Tournaments</title>
+  <link rel="icon" href="images/logo.png">
+
+  <!-- Custom fonts for this template-->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+
+  <!-- Page level plugin CSS-->
+  <link href="vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="css/sb-admin.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+  <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
+
+    <a class="navbar-brand mr-1" href="/">TEAMPALAK</a>
+
+    <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Navbar Search -->
+    <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+    </form>
+
+    <!-- Navbar -->
+    <ul class="navbar-nav ml-auto ml-md-0">
+      <li class="nav-item dropdown no-arrow">
+        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-user-circle fa-fw"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+          <!--
+          <a class="dropdown-item" href="#">Change Password</a>
+          <div class="dropdown-divider"></div>
+          -->
+          <!-- <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Logout</a> -->
+          <a class="dropdown-item" href="/logout">Logout</a>
+        </div>
+      </li>
+    </ul>
+
+  </nav>
+
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="sidebar navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/">
+          <i class="fas fa-fw fa-home"></i>
+          <span>Home</span>
+        </a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/tournaments">
+          <i class="fas fa-fw fa-trophy"></i>
+          <span>Tournaments</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/announcements">
+          <i class="fas fa-fw fa-bullhorn"></i>
+          <span>Announcements</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#changeApiKeyModal" data-toggle="modal">
+          <i class="fas fa-fw fa-key"></i>
+          <span>API Key</span></a>
+      </li>
+    </ul>
+
+    <div id="content-wrapper">
+      <div class="container-fluid">
+        <div class="card mb-3">
+          <div class="card-header">
+            <i class="fas fa-table"></i>
+            List of Tournaments
+          </div>
+          <div class="card-body">
+            <a href="#addTournamentModal" class="btn btn-success" data-toggle="modal"><i class="fas fa-plus"></i><span> Add New Tournament</span></a>
+            <p></p>
+            <div class="table-responsive">
+              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                  <tr bgcolor="#cccccc">
+                    <th>No.</th>
+                    <th>Tournament Name</th>
+                    <th>Game</th>
+                    <th>Tournament Range</th>
+                    <!--
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Venue</th>
+                    -->
+                    <th>Registration Fee</th>
+                    <th>Slots</th> 
+                    <!--
+                    <th>Image</th>
+                    -->
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% for(var index = 0; index < data.length; index++){ %>
+                    <tr bgcolor="#efefef">
+                      <td><%= index+1 %></td>
+                      <% if(data[index].Tpiclength > 0){ %>
+                        <td><%= data[index].TournamentName %> <i class="fas fa-camera"></i></td>
+                      <% } else { %>
+                        <td><%= data[index].TournamentName %></td>
+                      <% } %>
+                      <td><%= data[index].TournamentGame %></td>
+                      <td><%= data[index].TournaRange %></td>
+                      <!--
+                      <td><%= data[index].tDate %></td>
+                      <td><%= data[index].tTime %></td>
+                      <td><%= data[index].TVenue %></td>
+                      -->
+                      <td>&#8369;<%= data[index].rf %></td>
+                      <% if(data[index].registeredteamID){ %>
+                        <td><%= data[index].registeredteamID %>/<%= data[index].Max_participants %></td>
+                      <% } else { %>
+                        <td>0/<%= data[index].Max_participants %></td>
+                      <% } %>
+                      <!--
+                      <% if(data[index].Tpiclength > 0){ %>
+                        <td>Image</td>
+                      <% } else { %>
+                        <td>N/A</td>
+                      <% } %>
+                      -->
+                      <% if(data[index].Status == "Open"){ %>
+                        <td bgcolor="#28a745" style="color:#fff"><%= data[index].Status %></td>
+                      <% } else { %>
+                        <td bgcolor="#bd2130" style="color:#fff"><%= data[index].Status %></td>
+                      <% } %>
+                      <td>
+                        <div class="form-row">
+                          <form action="/viewtregister" method="POST">
+                            <input type="hidden" name="index" value=index>
+                            <input type="hidden" name="TournamentID" value="<%= data[index].TournamentID %>">
+                            <button title="Details" class="btn btn-link order-1 order-sm-0">
+                              <i class="fas fa-eye" style="color:#99aa52"></i>
+                            </button>
+                          </form>
+                          
+                          <% if(data[index].Status == "Open"){ %>
+                            <form action="/viewtdetails" method="POST">
+                              <input type="hidden" name="index" value=index>
+                              <input type="hidden" name="TournamentID" value="<%= data[index].TournamentID %>">
+                              <button title="Edit" class="btn btn-link btn-sm order-1 order-sm-0" type="submit">
+                                <i class="fas fa-pen" style="color:#d39e00"></i>
+                              </button>
+                            </form>
+                            
+                            <form action="/closetournament" method="POST">
+                              <input type="hidden" name="index" value=index>
+                              <input type="hidden" name="TournamentID" value="<%= data[index].TournamentID %>">
+                              <button onclick="return confirm('Close tournament?')" title="Close" class="btn btn-link order-1 order-sm-0">
+                                <i class="fas fa-times" style="color:#bd2130"></i>
+                              </button>
+                            </form>
+                          <% } else { %>
+                            <form action="/viewtdetails" method="POST">
+                              <input type="hidden" name="index" value=index>
+                              <input type="hidden" name="TournamentID" value="<%= data[index].TournamentID %>">
+                              <button title="Edit" class="btn btn-link btn-sm order-1 order-sm-0" type="submit" disabled>
+                                <i class="fas fa-pen" style="color:#d39e00"></i>
+                              </button>
+                            </form>
+                            
+                            <form action="/removetournament" method="POST">
+                              <input type="hidden" name="index" value=index>
+                              <input type="hidden" name="TournamentID" value="<%= data[index].TournamentID %>">
+                              <button onclick="return confirm('Delete tournament?')" title="Delete" class="btn btn-link btn-sm order-1 order-sm-0">
+                                <i class="fas fa-trash" style="color:#bd2130"></i>
+                              </button>
+                            </form>
+                          <% } %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    
+
+      <!-- Sticky Footer -->
+      <footer class="sticky-footer">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright © TeamPalak - 2019</span>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+    <!-- /.content-wrapper -->
+
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Add Tournament Modal HTML -->
+  <div id="addTournamentModal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="/addtournament" autocomplete="off" method="POST">
+          <div class="modal-header">            
+            <h5 class="modal-title">Add New Tournament</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          </div>
+          <div class="modal-body">          
+            <div class="form-group">
+              <h6>Tournament Name</h6>
+              <input type="text" name="TournamentName" maxlength="45" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <h6>Game</h6>
+              <select id="TournamentGame" name="TournamentGame" class="form-control" required>
+                <option value="LoL">League of Legends (LoL)</option>
+                <option value="DotA 2">Defense of the Ancients 2 (DotA 2)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <h6>Venue</h6>
+              <input type="text" name="TournamentVenue" maxlength="45" class="form-control" required>
+            </div>
+
+              <div class="form-row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <h6>Tournament Range</h6>
+                    <select id="LowerRank" name="LowerRank" class="form-control" required>
+                      <option value="1">Iron 4</option>
+                      <option value="2">Iron 3</option>
+                      <option value="3">Iron 2</option>
+                      <option value="4">Iron 1</option>
+                      <option value="5">Bronze 4</option>
+                      <option value="6">Bronze 3</option>
+                      <option value="7">Bronze 2</option>
+                      <option value="8">Bronze 1</option>
+                      <option value="9">Silver 4</option>
+                      <option value="10">Silver 3</option>
+                      <option value="11">Silver 2</option>
+                      <option value="12">Silver 1</option>
+                      <option value="13">Gold 4</option>
+                      <option value="14">Gold 3</option>
+                      <option value="15">Gold 2</option>
+                      <option value="16">Gold 1</option>
+                      <option value="17">Platinum 4</option>
+                      <option value="18">Platinum 3</option>
+                      <option value="19">Platinum 2</option>
+                      <option value="20">Platinum 1</option>
+                      <option value="21">Diamond 4</option>
+                      <option value="22">Diamond 3</option>
+                      <option value="23">Diamond 2</option>
+                      <option value="24">Diamond 1</option>
+                      <option value="25">Master</option>
+                      <option value="26">Grandmaster</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <h6>&nbsp;</h6>
+                    <select id="UpperRank" name="UpperRank" class="form-control" required>
+                      <option value="2">Iron 3</option>
+                      <option value="3">Iron 2</option>
+                      <option value="4">Iron 1</option>
+                      <option value="5">Bronze 4</option>
+                      <option value="6">Bronze 3</option>
+                      <option value="7">Bronze 2</option>
+                      <option value="8">Bronze 1</option>
+                      <option value="9">Silver 4</option>
+                      <option value="10">Silver 3</option>
+                      <option value="11">Silver 2</option>
+                      <option value="12">Silver 1</option>
+                      <option value="13">Gold 4</option>
+                      <option value="14">Gold 3</option>
+                      <option value="15">Gold 2</option>
+                      <option value="16">Gold 1</option>
+                      <option value="17">Platinum 4</option>
+                      <option value="18">Platinum 3</option>
+                      <option value="19">Platinum 2</option>
+                      <option value="20">Platinum 1</option>
+                      <option value="21">Diamond 4</option>
+                      <option value="22">Diamond 3</option>
+                      <option value="23">Diamond 2</option>
+                      <option value="24">Diamond 1</option>
+                      <option value="25">Master</option>
+                      <option value="26">Grandmaster</option>
+                      <option value="27">Challenger</option>
+                    </select>
+                  </div>
+                </div>
+              </div>    
+            
+              <div class="form-row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <h6>Date</h6>
+                    <input type="date" name="tDate" value="<%= tomorrow %>" min="<%= tomorrow %>" class="form-control form-rounded" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <h6>Time</h6>
+                    <input type="time" name="tTime" class="form-control form-rounded" required>
+                  </div>
+                </div>
+              </div>
+            
+            <div class="form-row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <h6>Registration Fee (&#8369;)</h6>
+                  <input type="number" oninput="setTwoNumberDecimal(this)" name="Price" min="100" step="0.25" value="100.00" class="form-control form-rounded" required>
+                </div>
+                <p id="demo"></p>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <h6>No. of Teams</h6>
+                  <input type="number" name="MaxParticipants" value="16" class="form-control form-rounded" readonly>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <h6>1st Place Prize (&#8369;)</h6>
+                  <input type="number" oninput="setTwoNumberDecimal(this)" name="FirstPrize" min="100" step="0.25" value="100.00" class="form-control form-rounded" required>
+                </div>
+                <p id="demo"></p>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <h6>2nd Place Prize (&#8369;)</h6>
+                  <input type="number" oninput="setTwoNumberDecimal(this)" name="SecondPrize" min="100" step="0.25" value="100.00" class="form-control form-rounded" required>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <h6>Picture</h6>
+              <input type="file" name="TournamentPicture" accept="image/png,image/jpeg">
+            </div>  
+          </div>
+          <div class="modal-footer">
+            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+            <input type="submit" class="btn btn-success" value="Add">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change API Key Modal HTML -->
+  <div id="changeApiKeyModal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form action="/changeapikey" autocomplete="off" method="POST">
+          <div class="modal-header">            
+            <h5 class="modal-title">Change API Key</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          </div>
+          <div class="modal-body">          
+            <div class="form-group">
+              <h6>API Key</h6>
+              <input type="text" name="ApiKey" maxlength="50" class="form-control" required>
+            </div>  
+          </div>
+          <div class="modal-footer">
+            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+            <input type="submit" class="btn btn-success" value="Save">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Page level plugin JavaScript-->
+  <script src="vendor/chart.js/Chart.min.js"></script>
+  <script src="vendor/datatables/jquery.dataTables.js"></script>
+  <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="js/sb-admin.min.js"></script>
+
+  <!-- Demo scripts for this page-->
+  <script src="js/demo/datatables-demo.js"></script>
+  <script src="js/demo/chart-area-demo.js"></script>
+
+  <script>
+    function setTwoNumberDecimal(el) {
+      el.value = parseFloat(el.value).toFixed(2);
+    };
+
+    $(document).ready(function () {
+      $("#TournamentGame").change(function () {
+        var val = $(this).val();
+        if (val == "LoL") {
+          $("#LowerRank").html("<option value='1'>Iron 4</option><option value='2'>Iron 3</option><option value='3'>Iron 2</option><option value='4'>Iron 1</option><option value='5'>Bronze 4</option><option value='6'>Bronze 3</option><option value='7'>Bronze 2</option><option value='8'>Bronze 1</option><option value='9'>Silver 4</option><option value='10'>Silver 3</option><option value='11'>Silver 2</option><option value='12'>Silver 1</option><option value='13'>Gold 4</option><option value='14'>Gold 3</option><option value='15'>Gold 2</option><option value='16'>Gold 1</option><option value='17'>Platinum 4</option><option value='18'>Platinum 3</option><option value='19'>Platinum 2</option><option value='20'>Platinum 1</option><option value='21'>Diamond 4</option><option value='22'>Diamond 3</option><option value='23'>Diamond 2</option><option value='24'>Diamond 1</option><option value='25'>Master</option><option value='26'>Grandmaster</option>");
+          $("#UpperRank").html("<option value='2'>Iron 3</option><option value='3'>Iron 2</option><option value='4'>Iron 1</option><option value='5'>Bronze 4</option><option value='6'>Bronze 3</option><option value='7'>Bronze 2</option><option value='8'>Bronze 1</option><option value='9'>Silver 4</option><option value='10'>Silver 3</option><option value='11'>Silver 2</option><option value='12'>Silver 1</option><option value='13'>Gold 4</option><option value='14'>Gold 3</option><option value='15'>Gold 2</option><option value='16'>Gold 1</option><option value='17'>Platinum 4</option><option value='18'>Platinum 3</option><option value='19'>Platinum 2</option><option value='20'>Platinum 1</option><option value='21'>Diamond 4</option><option value='22'>Diamond 3</option><option value='23'>Diamond 2</option><option value='24'>Diamond 1</option><option value='25'>Master</option><option value='26'>Grandmaster</option><option value='27'>Challenger</option>");
+        } else if (val == "DotA 2") {
+          $("#LowerRank").html("<option value='1'>Herald 1</option><option value='2'>Herald 2</option><option value='3'>Herald 3</option><option value='4'>Herald 4</option><option value='5'>Herald 5</option><option value='6'>Herald 6</option><option value='7'>Herald 7</option><option value='8'>Guardian 1</option><option value='9'>Guardian 2</option><option value='10'>Guardian 3</option><option value='11'>Guardian 4</option><option value='12'>Guardian 5</option><option value='13'>Guardian 6</option><option value='14'>Guardian 7</option><option value='15'>Crusader 1</option><option value='16'>Crusader 2</option><option value='17'>Crusader 3</option><option value='18'>Crusader 4</option><option value='19'>Crusader 5</option><option value='20'>Crusader 6</option><option value='21'>Crusader 7</option><option value='22'>Archon 1</option><option value='23'>Archon 2</option><option value='24'>Archon 3</option><option value='25'>Archon 4</option><option value='26'>Archon 5</option><option value='27'>Archon 6</option><option value='28'>Archon 7</option><option value='29'>Legend 1</option><option value='30'>Legend 2</option><option value='31'>Legend 3</option><option value='32'>Legend 4</option><option value='33'>Legend 5</option><option value='34'>Legend 6</option><option value='35'>Legend 7</option><option value='36'>Ancient 1</option><option value='37'>Ancient 2</option><option value='38'>Ancient 3</option><option value='39'>Ancient 4</option><option value='40'>Ancient 5</option><option value='41'>Ancient 6</option><option value='42'>Ancient 7</option><option value='43'>Divine 1</option><option value='44'>Divine 2</option><option value='45'>Divine 3</option><option value='46'>Divine 4</option><option value='47'>Divine 5</option><option value='48'>Divine 6</option><option value='49'>Divine 7</option><option value='50'>Immortal</option><option value='51'>Immortal Top 1000</option><option value='52'>Immortal Top 100</option><option value='53'>Immortal Top 10</option>");
+          $("#UpperRank").html("<option value='2'>Herald 2</option><option value='3'>Herald 3</option><option value='4'>Herald 4</option><option value='5'>Herald 5</option><option value='6'>Herald 6</option><option value='7'>Herald 7</option><option value='8'>Guardian 1</option><option value='9'>Guardian 2</option><option value='10'>Guardian 3</option><option value='11'>Guardian 4</option><option value='12'>Guardian 5</option><option value='13'>Guardian 6</option><option value='14'>Guardian 7</option><option value='15'>Crusader 1</option><option value='16'>Crusader 2</option><option value='17'>Crusader 3</option><option value='18'>Crusader 4</option><option value='19'>Crusader 5</option><option value='20'>Crusader 6</option><option value='21'>Crusader 7</option><option value='22'>Archon 1</option><option value='23'>Archon 2</option><option value='24'>Archon 3</option><option value='25'>Archon 4</option><option value='26'>Archon 5</option><option value='27'>Archon 6</option><option value='28'>Archon 7</option><option value='29'>Legend 1</option><option value='30'>Legend 2</option><option value='31'>Legend 3</option><option value='32'>Legend 4</option><option value='33'>Legend 5</option><option value='34'>Legend 6</option><option value='35'>Legend 7</option><option value='36'>Ancient 1</option><option value='37'>Ancient 2</option><option value='38'>Ancient 3</option><option value='39'>Ancient 4</option><option value='40'>Ancient 5</option><option value='41'>Ancient 6</option><option value='42'>Ancient 7</option><option value='43'>Divine 1</option><option value='44'>Divine 2</option><option value='45'>Divine 3</option><option value='46'>Divine 4</option><option value='47'>Divine 5</option><option value='48'>Divine 6</option><option value='49'>Divine 7</option><option value='50'>Immortal</option><option value='51'>Immortal Top 1000</option><option value='52'>Immortal Top 100</option><option value='53'>Immortal Top 10</option><option value='54'>Immortal Top 1</option>");
+        }
+      });
+
+      $("#LowerRank").change(function () {
+        var $LowerRank = $( '#LowerRank' );
+        var $UpperRank = $( '#UpperRank' );
+        var val = $(this).val();
+        var game = $("#TournamentGame").val();
+
+        if(game == "LoL") {
+          $UpperRank.html("<option value='2'>Iron 3</option><option value='3'>Iron 2</option><option value='4'>Iron 1</option><option value='5'>Bronze 4</option><option value='6'>Bronze 3</option><option value='7'>Bronze 2</option><option value='8'>Bronze 1</option><option value='9'>Silver 4</option><option value='10'>Silver 3</option><option value='11'>Silver 2</option><option value='12'>Silver 1</option><option value='13'>Gold 4</option><option value='14'>Gold 3</option><option value='15'>Gold 2</option><option value='16'>Gold 1</option><option value='17'>Platinum 4</option><option value='18'>Platinum 3</option><option value='19'>Platinum 2</option><option value='20'>Platinum 1</option><option value='21'>Diamond 4</option><option value='22'>Diamond 3</option><option value='23'>Diamond 2</option><option value='24'>Diamond 1</option><option value='25'>Master</option><option value='26'>Grandmaster</option><option value='27'>Challenger</option>");
+          for(i = val; i > 0; i-- ) {
+            $UpperRank.find("option[value='" + i +"']").remove();
+          }
+        } else if (game == "DotA 2") {
+          $UpperRank.html("<option value='2'>Herald 2</option><option value='3'>Herald 3</option><option value='4'>Herald 4</option><option value='5'>Herald 5</option><option value='6'>Herald 6</option><option value='7'>Herald 7</option><option value='8'>Guardian 1</option><option value='9'>Guardian 2</option><option value='10'>Guardian 3</option><option value='11'>Guardian 4</option><option value='12'>Guardian 5</option><option value='13'>Guardian 6</option><option value='14'>Guardian 7</option><option value='15'>Crusader 1</option><option value='16'>Crusader 2</option><option value='17'>Crusader 3</option><option value='18'>Crusader 4</option><option value='19'>Crusader 5</option><option value='20'>Crusader 6</option><option value='21'>Crusader 7</option><option value='22'>Archon 1</option><option value='23'>Archon 2</option><option value='24'>Archon 3</option><option value='25'>Archon 4</option><option value='26'>Archon 5</option><option value='27'>Archon 6</option><option value='28'>Archon 7</option><option value='29'>Legend 1</option><option value='30'>Legend 2</option><option value='31'>Legend 3</option><option value='32'>Legend 4</option><option value='33'>Legend 5</option><option value='34'>Legend 6</option><option value='35'>Legend 7</option><option value='36'>Ancient 1</option><option value='37'>Ancient 2</option><option value='38'>Ancient 3</option><option value='39'>Ancient 4</option><option value='40'>Ancient 5</option><option value='41'>Ancient 6</option><option value='42'>Ancient 7</option><option value='43'>Divine 1</option><option value='44'>Divine 2</option><option value='45'>Divine 3</option><option value='46'>Divine 4</option><option value='47'>Divine 5</option><option value='48'>Divine 6</option><option value='49'>Divine 7</option><option value='50'>Immortal</option><option value='51'>Immortal Top 1000</option><option value='52'>Immortal Top 100</option><option value='53'>Immortal Top 10</option><option value='54'>Immortal Top 1</option>");
+          for(i = val; i > 0; i-- ) {
+            $UpperRank.find("option[value='" + i +"']").remove();
+          }
+        }
+      });
+    });
+  </script>
+
+</body>
+
+
+</html>
